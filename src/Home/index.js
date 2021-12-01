@@ -45,7 +45,10 @@ export default function Home() {
         <View style={styles.areaCoin}>
           <Text style={styles.title}>Selecione sua moeda</Text>
   
-          <Picker coins={coins} />
+          <Picker 
+            coins={coins}
+            onChange={(coin) => setCoinSelected(coin)}  
+          />
         </View>
   
         <View style={styles.areaValue}>

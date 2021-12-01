@@ -13,7 +13,7 @@ export default function Picker(props){
         <RNPickerSelect 
             placeholder={placeholder}
             items={props.coins}
-            onValueChange={(value) => console.log(value)}
+            onValueChange={(value) => props.onChange(value)}
             style={{
                 inputIOS: {
                     fontSize: 20,
