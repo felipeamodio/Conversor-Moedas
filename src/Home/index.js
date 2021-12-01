@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import { StyleSheet, Text, SafeAreaView, View, TextInput, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { StyleSheet, Text, SafeAreaView, View, TextInput, TouchableOpacity, ActivityIndicator, keyboard, Keyboard } from 'react-native';
 
 import Picker from '../components/Picker';
 
@@ -10,6 +10,8 @@ export default function Home() {
   const [coinSelected, setCoinSelected] = useState(null);
   const [coinValue, setCoinValue] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [numberCoin, setNumberCoin] = useState(null);
+  const [valueConvert, setValueConvert] = useState(0);
 
   useEffect(() => {
     async function loadCoins(){
@@ -32,6 +34,23 @@ export default function Home() {
 
     loadCoins();
   }, []);
+
+  async function converter(){
+    if(coinSelected === null || coinValue === 0){
+      alert('Por favor, selecione uma moeda');
+      return;
+    }
+
+    const response = await api.get(`all/${coinSelected}-BRL`)
+    //console.log(response.data[coinSelected].ask);
+
+    //CONTA QUE IRÁ RETORNAR A QUANTIDADE DO VALOR
+    let result = (response.data[coinSelected].ask * parseFloat(coinValue));
+    setValueConvert(`R$ ${result.toFixed(2)}`);
+    setNumberCoin(coinValue);
+
+    Keyboard.dismiss();
+  }
 
   if(loading){
     return(
@@ -61,15 +80,21 @@ export default function Home() {
           />
         </View>
   
-        <TouchableOpacity style={styles.button}>
+        <TouchableOpacity style={styles.button} activeOpacity={0.7} onPress={converter}>
           <Text style={styles.textButton}>Converter</Text>
         </TouchableOpacity>
+
+        {
+          valueConvert !== 0 && (
+          <View style={styles.areaResult}>
+              <Text style={styles.valor}>{numberCoin} {coinSelected}</Text>
+              <Text style={[styles.valor, {fontSize: 18, margin: 15}]}>Corresponde a</Text>
+              <Text style={styles.valor}>{valueConvert}</Text>
+          </View>
+          )
+        }
   
-        <View style={styles.areaResult}>
-          <Text style={styles.valor}>3 USD</Text>
-          <Text style={[styles.valor, {fontSize: 18, margin: 15}]}>Corresponde a</Text>
-          <Text style={styles.valor}>R$ 15,90</Text>
-        </View>
+        
       </SafeAreaView>
     );
   }
